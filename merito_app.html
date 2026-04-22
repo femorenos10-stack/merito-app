@@ -1,0 +1,383 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{display:flex;justify-content:center;align-items:flex-start;padding:24px;background:var(--color-background-secondary);border-radius:16px}
+.phone{width:340px;background:#1A2E4A;border-radius:36px;overflow:hidden;border:6px solid #0f1e30;font-family:var(--font-sans)}
+.screen{display:none;flex-direction:column;min-height:660px}
+.screen.active{display:flex}
+.hdr{background:#1A2E4A;padding:18px 18px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo-txt{font-size:17px;font-weight:500;color:#E8860A;letter-spacing:3px}
+.av{width:32px;height:32px;border-radius:50%;background:#E8860A;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#1A2E4A;cursor:pointer}
+.content{flex:1;overflow-y:auto;padding:0 0 70px}
+.content::-webkit-scrollbar{display:none}
+.bnav{background:#142438;padding:10px 8px 14px;display:flex;justify-content:space-around;flex-shrink:0}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 10px;border-radius:10px;transition:background .15s}
+.ni:hover{background:#1e3550}
+.ni.active{background:#E8860A22}
+.ni svg{width:20px;height:20px}
+.ni span{font-size:10px;color:#8fa8c4}
+.ni.active span{color:#E8860A}
+
+.pts-card{margin:12px 14px 10px;background:#E8860A;border-radius:20px;padding:18px}
+.pts-lbl{font-size:11px;color:#7a3f00;margin-bottom:2px}
+.pts-val{font-size:38px;font-weight:500;color:#fff;line-height:1}
+.pts-sub{font-size:12px;color:#fff;opacity:.85;margin-top:4px;display:flex;align-items:center;gap:6px}
+.green-dot{width:6px;height:6px;border-radius:50%;background:#4ade80}
+
+.ci-btn{margin:0 14px 14px;background:#fff;border:none;border-radius:14px;padding:13px;width:calc(100% - 28px);display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:500;color:#1A2E4A;cursor:pointer;transition:background .15s,color .15s}
+.ci-btn:hover{background:#f0f0f0}
+.ci-btn.done{background:#4ade80;color:#fff}
+
+.sec-lbl{font-size:11px;font-weight:500;color:#8fa8c4;letter-spacing:1.5px;padding:0 14px;margin-bottom:8px;text-transform:uppercase}
+
+.streak-card{margin:0 14px 14px;background:#243B55;border-radius:16px;padding:14px}
+.days-row{display:flex;gap:5px;margin-bottom:10px}
+.day{width:34px;height:42px;border-radius:8px;background:#1A2E4A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.day .dn{font-size:9px;color:#8fa8c4}
+.day .dc{font-size:14px;color:#8fa8c4}
+.day.done{background:#E8860A22}
+.day.done .dc{color:#E8860A}
+.day.today{background:#E8860A}
+.day.today .dn{color:#fff;opacity:.8}
+.day.today .dc{color:#fff}
+.streak-info{display:flex;align-items:center;justify-content:space-between}
+.streak-num{font-size:24px;font-weight:500;color:#E8860A}
+.streak-desc{font-size:12px;color:#8fa8c4}
+.next-rew{background:#E8860A11;border:1px solid #E8860A33;border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.nr-txt{font-size:12px;color:#E8860A}
+.nr-bar-wrap{width:80px;height:4px;background:#1A2E4A;border-radius:2px;margin-top:3px}
+.nr-bar{height:4px;background:#E8860A;border-radius:2px}
+
+.rew-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px}
+.rc{background:#243B55;border-radius:14px;padding:12px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+.rc:hover{background:#2d4a66}
+.rc.highlight{border-color:#E8860A44;background:#E8860A11}
+.rc.locked{opacity:.45}
+.rc .ri{font-size:22px;margin-bottom:6px}
+.rc .rn{font-size:12px;color:#fff;font-weight:500;line-height:1.3;margin-bottom:4px}
+.rc .rp{font-size:11px;color:#E8860A;font-weight:500}
+.rc .rb{margin-top:8px;background:#E8860A;border:none;border-radius:8px;padding:5px 10px;font-size:11px;color:#fff;cursor:pointer;width:100%}
+.rc.locked .rb{background:#8fa8c4;cursor:not-allowed}
+
+.notif{position:absolute;top:0;left:0;right:0;background:#4ade80;color:#166534;padding:10px 16px;font-size:13px;font-weight:500;text-align:center;z-index:10;border-radius:0;opacity:0;transition:opacity .3s;pointer-events:none}
+.notif.show{opacity:1}
+
+.rank-list{padding:0 14px}
+.rank-item{background:#243B55;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.rank-pos{width:24px;height:24px;border-radius:50%;background:#1A2E4A;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#8fa8c4}
+.rank-pos.gold{background:#E8860A;color:#fff}
+.rank-pos.silver{background:#8fa8c4;color:#1A2E4A}
+.rank-pos.bronze{background:#cd7c2f;color:#fff}
+.rank-av{width:32px;height:32px;border-radius:50%;background:#E8860A44;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#E8860A}
+.rank-info{flex:1}
+.rank-name{font-size:13px;color:#fff;font-weight:500}
+.rank-days{font-size:11px;color:#8fa8c4}
+.rank-pts{font-size:13px;color:#E8860A;font-weight:500}
+
+.turma-card{margin:0 14px 14px;background:#243B55;border-radius:16px;padding:16px}
+.prog-wrap{height:8px;background:#1A2E4A;border-radius:4px;margin:8px 0}
+.prog-fill{height:8px;background:#E8860A;border-radius:4px;transition:width .5s}
+.turma-meta{display:flex;justify-content:space-between;font-size:11px;color:#8fa8c4;margin-top:4px}
+
+.hist-list{padding:0 14px}
+.hist-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #243B55}
+.hist-dot{width:8px;height:8px;border-radius:50%;background:#E8860A;flex-shrink:0}
+.hist-dot.miss{background:#E24B4A}
+.hist-info{flex:1}
+.hist-date{font-size:12px;color:#8fa8c4}
+.hist-act{font-size:13px;color:#fff}
+.hist-pts{font-size:12px;color:#E8860A;font-weight:500}
+
+.prof-hdr{background:#243B55;margin:0 14px 14px;border-radius:16px;padding:20px;text-align:center}
+.prof-av{width:60px;height:60px;border-radius:50%;background:#E8860A;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;color:#1A2E4A;margin:0 auto 10px}
+.prof-name{font-size:16px;font-weight:500;color:#fff}
+.prof-school{font-size:12px;color:#8fa8c4;margin-top:2px}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 14px;margin-bottom:14px}
+.stat-c{background:#243B55;border-radius:12px;padding:12px 8px;text-align:center}
+.stat-v{font-size:20px;font-weight:500;color:#E8860A}
+.stat-l{font-size:10px;color:#8fa8c4;margin-top:2px}
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 14px}
+.badge{background:#243B55;border-radius:12px;padding:10px 6px;text-align:center}
+.badge .bi{font-size:20px;margin-bottom:4px}
+.badge .bl{font-size:9px;color:#8fa8c4;line-height:1.3}
+.badge.earned .bl{color:#E8860A}
+.badge.locked-b{opacity:.35}
+
+.notif-wrap{position:relative;overflow:hidden}
+</style>
+
+<div class="wrap">
+<div class="phone">
+<div class="notif-wrap" style="position:relative">
+<div class="notif" id="notif"></div>
+
+<div class="screen active" id="s-home">
+  <div class="hdr">
+    <div class="logo-txt">MÉRITO</div>
+    <div class="av" onclick="goScreen('s-perfil')">GA</div>
+  </div>
+  <div class="content" id="home-content">
+    <div style="padding:4px 14px 10px;font-size:13px;color:#8fa8c4">Olá, <span style="color:#fff;font-weight:500">Gabriel</span> — bom dia</div>
+    <div class="pts-card">
+      <div class="pts-lbl">seus pontos mérito</div>
+      <div class="pts-val" id="pts-display">1.240</div>
+      <div class="pts-sub"><div class="green-dot"></div>+50 pontos hoje</div>
+    </div>
+    <button class="ci-btn" id="ci-btn" onclick="doCheckin()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="#1A2E4A" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="#1A2E4A" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="#1A2E4A" stroke-width="1.5"/><rect x="10" y="10" width="2" height="2" fill="#1A2E4A"/><rect x="13" y="10" width="2" height="2" fill="#1A2E4A"/><rect x="10" y="13" width="2" height="2" fill="#1A2E4A"/></svg>
+      fazer check-in hoje
+    </button>
+    <div class="sec-lbl">sequência da semana</div>
+    <div class="streak-card">
+      <div class="days-row">
+        <div class="day done"><span class="dn">seg</span><span class="dc">✓</span></div>
+        <div class="day done"><span class="dn">ter</span><span class="dc">✓</span></div>
+        <div class="day done"><span class="dn">qua</span><span class="dc">✓</span></div>
+        <div class="day done"><span class="dn">qui</span><span class="dc">✓</span></div>
+        <div class="day today" id="fri-day"><span class="dn">sex</span><span class="dc" id="fri-ic">—</span></div>
+        <div class="day"><span class="dn">sáb</span><span class="dc" style="color:#1A2E4A">·</span></div>
+        <div class="day"><span class="dn">dom</span><span class="dc" style="color:#1A2E4A">·</span></div>
+      </div>
+      <div class="streak-info">
+        <div><div class="streak-num" id="streak-num">4</div><div class="streak-desc">dias seguidos</div></div>
+        <div style="text-align:right"><div style="font-size:11px;color:#8fa8c4">próxima recompensa</div>
+        <div class="nr-bar-wrap"><div class="nr-bar" id="nr-bar" style="width:80%"></div></div>
+        <div style="font-size:10px;color:#E8860A;margin-top:2px">5 dias = surpresa</div></div>
+      </div>
+    </div>
+    <div class="sec-lbl" style="margin-top:4px">recompensas em destaque</div>
+    <div class="rew-grid">
+      <div class="rc highlight" onclick="goScreen('s-recompensas')">
+        <div class="ri">📱</div><div class="rn">Recarga de celular</div><div class="rp">300 pts</div>
+        <button class="rb">resgatar</button>
+      </div>
+      <div class="rc" onclick="goScreen('s-recompensas')">
+        <div class="ri">🎵</div><div class="rn">Spotify 1 mês</div><div class="rp">500 pts</div>
+        <button class="rb">resgatar</button>
+      </div>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+  <div class="bnav" id="bnav-home">
+    <div class="ni active" onclick="goScreen('s-home')">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#E8860A" stroke-width="1.5" fill="#E8860A22"/></svg>
+      <span style="color:#E8860A">início</span>
+    </div>
+    <div class="ni" onclick="goScreen('s-recompensas')">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5L2 7.8l5.5-.8L10 2z" stroke="#8fa8c4" stroke-width="1.5"/></svg>
+      <span>recompensas</span>
+    </div>
+    <div class="ni" onclick="goScreen('s-turma')">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="#8fa8c4" stroke-width="1.5"/><circle cx="14" cy="8" r="2.5" stroke="#8fa8c4" stroke-width="1.5"/><path d="M1 17c0-3 2.7-5 6-5s6 2 6 5" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/><path d="M14 13c2 .3 4 1.5 4 4" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>turma</span>
+    </div>
+    <div class="ni" onclick="goScreen('s-perfil')">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="#8fa8c4" stroke-width="1.5"/><path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>perfil</span>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-recompensas">
+  <div class="hdr">
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="goScreen('s-home')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4l-5 5 5 5" stroke="#E8860A" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="logo-txt" style="font-size:15px">recompensas</div>
+    </div>
+    <div style="background:#E8860A22;border-radius:20px;padding:4px 10px;font-size:12px;color:#E8860A;font-weight:500" id="pts-badge">1.240 pts</div>
+  </div>
+  <div class="content">
+    <div style="padding:10px 14px 4px;font-size:11px;color:#8fa8c4">troque seus pontos por recompensas reais</div>
+    <div class="rew-grid" style="margin-top:8px">
+      <div class="rc highlight" onclick="resgatar('Recarga de celular',300)">
+        <div class="ri">📱</div><div class="rn">Recarga de celular</div><div class="rp">300 pts</div>
+        <button class="rb">resgatar</button>
+      </div>
+      <div class="rc" onclick="resgatar('Vale-alimentação',400)">
+        <div class="ri">🍔</div><div class="rn">Vale-alimentação</div><div class="rp">400 pts</div>
+        <button class="rb">resgatar</button>
+      </div>
+      <div class="rc" onclick="resgatar('Spotify 1 mês',500)">
+        <div class="ri">🎵</div><div class="rn">Spotify 1 mês</div><div class="rp">500 pts</div>
+        <button class="rb">resgatar</button>
+      </div>
+      <div class="rc" onclick="resgatar('Desconto transporte',200)">
+        <div class="ri">🚌</div><div class="rn">Desconto transporte</div><div class="rp">200 pts</div>
+        <button class="rb">resgatar</button>
+      </div>
+      <div class="rc" onclick="resgatar('Ingresso cinema',700)">
+        <div class="ri">🎬</div><div class="rn">Ingresso de cinema</div><div class="rp">700 pts</div>
+        <button class="rb">resgatar</button>
+      </div>
+      <div class="rc locked">
+        <div class="ri">🎁</div><div class="rn">Surpresa — 5 dias seguidos</div><div class="rp">bloqueado</div>
+        <button class="rb" disabled>bloqueado</button>
+      </div>
+    </div>
+    <div style="margin:14px 14px 0;background:#243B55;border-radius:14px;padding:14px">
+      <div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:6px">histórico de resgates</div>
+      <div class="hist-item"><div class="hist-dot"></div><div class="hist-info"><div class="hist-act">Recarga de celular</div><div class="hist-date">hoje, 07h42</div></div><div class="hist-pts">-300 pts</div></div>
+      <div class="hist-item"><div class="hist-dot"></div><div class="hist-info"><div class="hist-act">Spotify 1 mês</div><div class="hist-date">seg, 08h15</div></div><div class="hist-pts">-500 pts</div></div>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="goScreen('s-home')">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#8fa8c4" stroke-width="1.5"/></svg><span>início</span>
+    </div>
+    <div class="ni active" onclick="goScreen('s-recompensas')">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5L2 7.8l5.5-.8L10 2z" stroke="#E8860A" stroke-width="1.5" fill="#E8860A22"/></svg><span style="color:#E8860A">recompensas</span>
+    </div>
+    <div class="ni" onclick="goScreen('s-turma')">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="#8fa8c4" stroke-width="1.5"/><circle cx="14" cy="8" r="2.5" stroke="#8fa8c4" stroke-width="1.5"/><path d="M1 17c0-3 2.7-5 6-5s6 2 6 5" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/><path d="M14 13c2 .3 4 1.5 4 4" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/></svg><span>turma</span>
+    </div>
+    <div class="ni" onclick="goScreen('s-perfil')">
+      <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="#8fa8c4" stroke-width="1.5"/><path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/></svg><span>perfil</span>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-turma">
+  <div class="hdr">
+    <div class="logo-txt">turma</div>
+    <div style="font-size:11px;color:#8fa8c4">9º ano B</div>
+  </div>
+  <div class="content">
+    <div class="turma-card" style="margin-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:13px;color:#fff;font-weight:500">presença coletiva esta semana</div>
+        <div style="font-size:20px;font-weight:500;color:#E8860A">87%</div>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:87%"></div></div>
+      <div class="turma-meta"><span>meta: 90%</span><span>faltam 3%</span></div>
+      <div style="margin-top:10px;background:#E8860A11;border:1px solid #E8860A33;border-radius:10px;padding:8px 12px;font-size:12px;color:#E8860A">faltam 3% para a recompensa da turma — pizza na escola</div>
+    </div>
+    <div class="sec-lbl" style="margin-top:4px">ranking da turma</div>
+    <div class="rank-list">
+      <div class="rank-item"><div class="rank-pos gold">1</div><div class="rank-av">GA</div><div class="rank-info"><div class="rank-name">Gabriel A.</div><div class="rank-days">18 dias seguidos</div></div><div class="rank-pts">2.340 pts</div></div>
+      <div class="rank-item"><div class="rank-pos silver">2</div><div class="rank-av" style="background:#8fa8c444;color:#8fa8c4">MC</div><div class="rank-info"><div class="rank-name">Maria C.</div><div class="rank-days">15 dias seguidos</div></div><div class="rank-pts">1.980 pts</div></div>
+      <div class="rank-item"><div class="rank-pos bronze">3</div><div class="rank-av" style="background:#cd7c2f44;color:#cd7c2f">LP</div><div class="rank-info"><div class="rank-name">Lucas P.</div><div class="rank-days">12 dias seguidos</div></div><div class="rank-pts">1.650 pts</div></div>
+      <div class="rank-item"><div class="rank-pos">4</div><div class="rank-av" style="background:#534AB744;color:#AFA9EC">AS</div><div class="rank-info"><div class="rank-name">Ana S.</div><div class="rank-days">10 dias seguidos</div></div><div class="rank-pts">1.320 pts</div></div>
+      <div class="rank-item"><div class="rank-pos">5</div><div class="rank-av" style="background:#0F6E5644;color:#5DCAA5">RF</div><div class="rank-info"><div class="rank-name">Rafael F.</div><div class="rank-days">8 dias seguidos</div></div><div class="rank-pts">1.100 pts</div></div>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="goScreen('s-home')"><svg viewBox="0 0 20 20" fill="none"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#8fa8c4" stroke-width="1.5"/></svg><span>início</span></div>
+    <div class="ni" onclick="goScreen('s-recompensas')"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5L2 7.8l5.5-.8L10 2z" stroke="#8fa8c4" stroke-width="1.5"/></svg><span>recompensas</span></div>
+    <div class="ni active" onclick="goScreen('s-turma')"><svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="#E8860A" stroke-width="1.5"/><circle cx="14" cy="8" r="2.5" stroke="#E8860A" stroke-width="1.5"/><path d="M1 17c0-3 2.7-5 6-5s6 2 6 5" stroke="#E8860A" stroke-width="1.5" stroke-linecap="round"/><path d="M14 13c2 .3 4 1.5 4 4" stroke="#E8860A" stroke-width="1.5" stroke-linecap="round"/></svg><span style="color:#E8860A">turma</span></div>
+    <div class="ni" onclick="goScreen('s-perfil')"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="#8fa8c4" stroke-width="1.5"/><path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/></svg><span>perfil</span></div>
+  </div>
+</div>
+
+<div class="screen" id="s-perfil">
+  <div class="hdr">
+    <div class="logo-txt">perfil</div>
+    <div style="font-size:11px;color:#4ade80">● ativo</div>
+  </div>
+  <div class="content">
+    <div class="prof-hdr" style="margin-top:12px">
+      <div class="prof-av">GA</div>
+      <div class="prof-name">Gabriel Alves</div>
+      <div class="prof-school">EE Prof. Antônio Lima — 9º ano B</div>
+      <div style="margin-top:10px;display:flex;justify-content:center;gap:8px">
+        <div style="background:#E8860A22;border-radius:20px;padding:4px 12px;font-size:11px;color:#E8860A">membro desde mar/25</div>
+        <div style="background:#4ade8022;border-radius:20px;padding:4px 12px;font-size:11px;color:#4ade80">série A</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-c"><div class="stat-v" id="stat-pts">1.240</div><div class="stat-l">pontos</div></div>
+      <div class="stat-c"><div class="stat-v" id="stat-streak">4</div><div class="stat-l">sequência</div></div>
+      <div class="stat-c"><div class="stat-v">92%</div><div class="stat-l">frequência</div></div>
+    </div>
+    <div class="sec-lbl" style="margin-top:4px">conquistas</div>
+    <div class="badge-grid">
+      <div class="badge earned"><div class="bi">⭐</div><div class="bl">primeira semana</div></div>
+      <div class="badge earned"><div class="bi">🔥</div><div class="bl">5 dias seguidos</div></div>
+      <div class="badge earned"><div class="bi">📱</div><div class="bl">1º resgate</div></div>
+      <div class="badge earned"><div class="bi">🏆</div><div class="bl">top 3 turma</div></div>
+      <div class="badge locked-b"><div class="bi">💎</div><div class="bl">30 dias seguidos</div></div>
+      <div class="badge locked-b"><div class="bi">🎓</div><div class="bl">trimestre perfeito</div></div>
+      <div class="badge locked-b"><div class="bi">🚀</div><div class="bl">100 check-ins</div></div>
+      <div class="badge locked-b"><div class="bi">👑</div><div class="bl">1º lugar turma</div></div>
+    </div>
+    <div class="sec-lbl" style="margin-top:14px">histórico recente</div>
+    <div class="hist-list">
+      <div class="hist-item"><div class="hist-dot"></div><div class="hist-info"><div class="hist-act">check-in realizado</div><div class="hist-date">hoje, 07h42</div></div><div class="hist-pts">+50 pts</div></div>
+      <div class="hist-item"><div class="hist-dot"></div><div class="hist-info"><div class="hist-act">check-in realizado</div><div class="hist-date">qui, 07h38</div></div><div class="hist-pts">+50 pts</div></div>
+      <div class="hist-item"><div class="hist-dot"></div><div class="hist-info"><div class="hist-act">check-in realizado</div><div class="hist-date">qua, 07h51</div></div><div class="hist-pts">+50 pts</div></div>
+      <div class="hist-item"><div class="hist-dot miss"></div><div class="hist-info"><div class="hist-act" style="color:#E24B4A">falta registrada</div><div class="hist-date">ter, —</div></div><div class="hist-pts" style="color:#E24B4A">0 pts</div></div>
+      <div class="hist-item"><div class="hist-dot"></div><div class="hist-info"><div class="hist-act">check-in realizado</div><div class="hist-date">seg, 07h45</div></div><div class="hist-pts">+50 pts</div></div>
+    </div>
+    <div style="height:8px"></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="goScreen('s-home')"><svg viewBox="0 0 20 20" fill="none"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="#8fa8c4" stroke-width="1.5"/></svg><span>início</span></div>
+    <div class="ni" onclick="goScreen('s-recompensas')"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5L2 7.8l5.5-.8L10 2z" stroke="#8fa8c4" stroke-width="1.5"/></svg><span>recompensas</span></div>
+    <div class="ni" onclick="goScreen('s-turma')"><svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="#8fa8c4" stroke-width="1.5"/><circle cx="14" cy="8" r="2.5" stroke="#8fa8c4" stroke-width="1.5"/><path d="M1 17c0-3 2.7-5 6-5s6 2 6 5" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/><path d="M14 13c2 .3 4 1.5 4 4" stroke="#8fa8c4" stroke-width="1.5" stroke-linecap="round"/></svg><span>turma</span></div>
+    <div class="ni active" onclick="goScreen('s-perfil')"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="#E8860A" stroke-width="1.5"/><path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="#E8860A" stroke-width="1.5" stroke-linecap="round"/></svg><span style="color:#E8860A">perfil</span></div>
+  </div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+var pts = 1240;
+var streak = 4;
+var checkedIn = false;
+
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+}
+
+function showNotif(msg){
+  var n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(function(){n.classList.remove('show')},2500);
+}
+
+function doCheckin(){
+  if(checkedIn){showNotif('Você já fez check-in hoje!');return;}
+  checkedIn = true;
+  pts += 50;
+  streak += 1;
+  updatePts();
+  var btn = document.getElementById('ci-btn');
+  btn.classList.add('done');
+  btn.innerHTML = '<span style="font-size:16px">✓</span> check-in realizado!';
+  document.getElementById('fri-ic').textContent = '✓';
+  document.getElementById('streak-num').textContent = streak;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('nr-bar').style.width = '100%';
+  showNotif('+50 Pontos Mérito creditados!');
+  if(streak === 5){
+    setTimeout(function(){showNotif('Surpresa desbloqueada — 5 dias seguidos!');},3000);
+    document.querySelectorAll('.rc.locked').forEach(function(el){
+      el.classList.remove('locked');
+      el.querySelector('.rn').textContent='Surpresa desbloqueada!';
+      el.querySelector('.rp').textContent='resgate agora';
+      el.querySelector('.rb').textContent='resgatar';
+      el.querySelector('.rb').disabled=false;
+      el.querySelector('.rb').style.background='#E8860A';
+    });
+  }
+}
+
+function resgatar(nome, custo){
+  if(pts < custo){showNotif('Pontos insuficientes para '+nome);return;}
+  pts -= custo;
+  updatePts();
+  showNotif(nome+' resgatado com sucesso!');
+}
+
+function updatePts(){
+  var f = pts.toLocaleString('pt-BR');
+  document.getElementById('pts-display').textContent = f;
+  document.getElementById('pts-badge').textContent = f+' pts';
+  document.getElementById('stat-pts').textContent = f;
+}
+</script>
